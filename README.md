@@ -1,7 +1,3 @@
-# tectonic-hackathon
-Ja, plak dit volledig in je `README.md` bestand op GitHub:
-
-```markdown
 # Adaptive Budgeting App
 
 ## Overview
@@ -76,4 +72,3 @@ This app is designed for:
 - Families who need a clear, shared picture of the month
 - Seniors who want reassurance and clear warnings
 - Students and young adults with irregular income who need to anticipate low points
-```
