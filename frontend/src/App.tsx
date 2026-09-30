@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { api } from "./api";
 import { AuthContext } from "./auth";
 import { Home } from "./routes/Home";
+import { Insight } from "./routes/Insight";
 import { Login } from "./routes/Login";
 import type { Me } from "./types";
 
@@ -32,6 +33,7 @@ export default function App() {
           <AuthContext.Provider value={auth}>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/insights/:key" element={<Insight />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AuthContext.Provider>
