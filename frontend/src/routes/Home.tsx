@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth";
 import { Screen } from "../components/Screen";
 import { eur, longDate } from "../format";
@@ -48,6 +48,26 @@ export function Home() {
               </div>
             ))}
           </div>
+
+          <h2 className="section-title">Time Machine</h2>
+          {data.insights.length === 0 ? (
+            <div className="card muted">Nothing unusual this month.</div>
+          ) : (
+            <div className="stack">
+              {data.insights.map((i) => (
+                <Link key={i.key} to={`/insights/${encodeURIComponent(i.key)}`} className="card card-link">
+                  <div className="stack-tight grow">
+                    <span className="tag">{i.type === "saving" ? "Saving" : "Spending"}</span>
+                    <span>{i.headline}</span>
+                    {i.noted && <span className="chip">Noted</span>}
+                  </div>
+                  <span className="chevron" aria-hidden="true">
+                    ›
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
           <p className="muted small">
             {data.coverage_note} Data up to {longDate(data.as_of)}.
           </p>
