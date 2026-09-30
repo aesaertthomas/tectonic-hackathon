@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from .api import auth, goals, insights, overview
+from .api import auth, budget, goals, insights, overview
 from .config import Settings, get_settings
 from .security import make_security_middleware
 
@@ -20,6 +20,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.middleware("http")(make_security_middleware(settings.allowed_origins))
     app.include_router(auth.router)
     app.include_router(overview.router)
+    app.include_router(budget.router)
     app.include_router(insights.router)
     app.include_router(goals.router)
 
