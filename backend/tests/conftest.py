@@ -57,3 +57,12 @@ def client(app):
     with TestClient(app) as test_client:
         test_client.headers.update({"Origin": ORIGIN, "X-Requested-With": "fetch"})
         yield test_client
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limits():
+    from app.api.auth import ip_limiter, user_limiter
+
+    user_limiter.clear()
+    ip_limiter.clear()
+    yield
