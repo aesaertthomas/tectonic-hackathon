@@ -57,6 +57,33 @@ class MonthAmountOut(BaseModel):
     amount_cents: int
 
 
+BudgetStatus = Literal["high", "above", "ok"]
+
+
+class BudgetCategoryOut(BaseModel):
+    category: str
+    label: str
+    amount_cents: int
+    typical_cents: int
+    usual_low_cents: int
+    usual_high_cents: int
+    status: BudgetStatus
+    note: str
+    history: list[MonthAmountOut]
+    insight_key: str | None
+    noted: bool
+
+
+class BudgetOut(BaseModel):
+    month: str
+    total_cents: int
+    typical_total_cents: int
+    status: BudgetStatus
+    note: str
+    categories: list[BudgetCategoryOut]
+    coverage_note: str
+
+
 class TxnOut(BaseModel):
     id: int
     booked_on: date

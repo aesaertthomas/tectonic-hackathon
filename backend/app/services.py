@@ -3,7 +3,7 @@
 from .engine.baseline import baseline_months, monthly_net_savings, monthly_spend
 from .engine.detect import RECENT_MONTHS, SavingIncrease, SpendingIncrease
 from .engine.forecast import ForecastInputs, build_inputs
-from .engine.insights import Insight, compute_insights
+from .engine.insights import Insight, compute_insights, visible_insights
 from .engine.money import add_months, median_int, month_of
 from .engine.types import SPENDING_CATEGORIES, Kind, Txn
 from .repo import CustomerData
@@ -66,3 +66,12 @@ def suggested_monthly_saving(data: CustomerData | None) -> int:
     per_month = monthly_net_savings(data.txns, data.savings_ids)
     recent = [add_months(data.analysis_month, -i) for i in range(RECENT_MONTHS)]
     return max(0, median_int([per_month.get(m, 0) for m in recent]))
+
+
+def flagged_categories(data: CustomerData, feedback: dict[str, str]) -> dict[str, str]:
+    """Category -> insight key, for spending insights the customer can still see."""
+    return {
+        i.spending.category: i.key
+        for i in visible_insights(all_insights(data), feedback)
+        if i.spending is not None
+    }
