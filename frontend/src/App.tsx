@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { api } from "./api";
 import { AuthContext } from "./auth";
+import { GoalForm } from "./routes/GoalForm";
+import { Goals } from "./routes/Goals";
 import { Home } from "./routes/Home";
 import { Insight } from "./routes/Insight";
 import { Login } from "./routes/Login";
@@ -36,6 +38,9 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/insights/:key" element={<Insight />} />
               <Route path="/insights/:key/scenario" element={<Scenario />} />
+              <Route path="/goals" element={<Goals />} />
+              <Route path="/goals/new" element={<GoalForm />} />
+              <Route path="/goals/:id" element={<GoalForm />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AuthContext.Provider>
