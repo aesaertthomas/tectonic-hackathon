@@ -42,11 +42,12 @@ export function Insight() {
   const isSpending = data?.type === "spending";
 
   return (
-    <Screen title={isSpending ? "Spending" : "Saving"} back="/">
+    <Screen title={isSpending ? "Spending" : "Saving"} subtitle={data?.question} back="/">
       {error && <p className="error">{error}</p>}
       {!data && !error && <p className="muted">Loading…</p>}
       {data && (
-        <>
+        <div className="split">
+          <div className="split-main">
           <div className="card stack">
             <p className="headline">{data.headline}</p>
             <BarChart
@@ -115,9 +116,11 @@ export function Insight() {
                 )}
                 {message && <p className="error">{message}</p>}
               </div>
-              <Link className="btn btn-primary" to={`${path}/scenario`}>
-                See the impact
-              </Link>
+              <div className="actions">
+                <Link className="btn btn-primary" to={`${path}/scenario`}>
+                  See the impact
+                </Link>
+              </div>
             </>
           ) : (
             <div className="card stack">
@@ -142,6 +145,8 @@ export function Insight() {
             </div>
           )}
 
+          </div>
+          <div className="split-side">
           <details className="card">
             <summary>Why you're seeing this</summary>
             <ul>
@@ -165,7 +170,8 @@ export function Insight() {
             </ul>
           </div>
           <p className="muted small">{data.coverage_note}</p>
-        </>
+          </div>
+        </div>
       )}
     </Screen>
   );

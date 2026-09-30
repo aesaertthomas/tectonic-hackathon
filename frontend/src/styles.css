@@ -93,3 +93,13 @@ table.balances thead th { border-top: 0; color: var(--muted); font-weight: 600; 
 
 @media (max-width: 650px) { .grid-2 { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* Two-column pages: main column + side column on wide screens, stacked on narrow ones. */
+.split { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.split-main, .split-side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.goal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.actions .btn { width: auto; }
+.banner-cta { width: auto; margin-left: auto; white-space: nowrap; }
+@media (max-width: 950px) { .split { grid-template-columns: 1fr; } }
+@media (max-width: 650px) { .actions .btn { width: 100%; } .banner-cta { width: 100%; } }
