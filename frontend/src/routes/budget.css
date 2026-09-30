@@ -34,7 +34,7 @@
 .banner-copy { min-width: 0; }
 .banner-copy h2 { font-size: 16px; }
 .banner-copy p { color: var(--muted); font-size: 12px; margin-top: 4px; }
-.detail { border: 1px solid var(--line); border-radius: 11px; background: #ffffffcf; margin-bottom: 7px; }
+.detail { scroll-margin-top: calc(var(--top) + 12px); border: 1px solid var(--line); border-radius: 11px; background: #ffffffcf; margin-bottom: 7px; }
 .detail > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(210px, 1.55fr) minmax(160px, 1fr) minmax(160px, 1.1fr); align-items: center; gap: 16px; padding: 10px 12px 10px 18px; min-height: 55px; }
 .detail > summary::-webkit-details-marker { display: none; }
 .detail > summary .progress-row { margin: 0; }

@@ -6,7 +6,7 @@
 .logout { background: none; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; color: #0065c9; cursor: pointer; font-size: 12px; }
 
 .sidebar { position: fixed; inset: var(--top) auto 0 0; width: var(--side); background: #ffffffd9; border-right: 1px solid var(--line); padding: 21px 8px; display: flex; flex-direction: column; z-index: 9; overflow-y: auto; }
-.nav { display: flex; align-items: center; gap: 13px; padding: 12px 17px; border-radius: 8px; color: #102b6c; font-size: 13px; margin: 1px 0; }
+.nav { display: flex; align-items: center; gap: 13px; padding: 12px 17px; border-radius: 8px; color: #102b6c; font-size: 13px; margin: 1px 0; position: relative; }
 .nav .icon { width: 19px; height: 19px; color: #3155a0; }
 .nav[aria-disabled="true"] { cursor: default; }
 .nav.active { background: #e2f3ff; color: #0085ff; }
@@ -39,7 +39,7 @@
   .brand { width: 36px; }
   .topbar { gap: 15px; padding: 0 18px; }
   .nav { justify-content: center; }
-  .nav > span { display: none; }
+  .nav > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .profile b { display: none; }
 }
 @media (max-width: 650px) {
