@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .api import auth
+from .api import auth, insights, overview
 from .config import Settings, get_settings
 from .security import make_security_middleware
 
@@ -15,6 +15,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.middleware("http")(make_security_middleware(settings.allowed_origins))
     app.include_router(auth.router)
+    app.include_router(overview.router)
+    app.include_router(insights.router)
 
     @app.get("/api/health")
     def health() -> dict[str, str]:

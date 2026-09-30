@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from datetime import date
 
 from sqlalchemy import func, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from .engine.baseline import analysis_month, first_full_month
@@ -77,12 +78,19 @@ def feedback_map(db: Session, customer_id: int) -> dict[str, str]:
 
 
 def upsert_feedback(db: Session, customer_id: int, key: str, response: str) -> None:
-    existing = db.scalar(
-        select(InsightFeedback).where(InsightFeedback.customer_id == customer_id, InsightFeedback.insight_key == key)
-    )
+    def find() -> InsightFeedback | None:
+        return db.scalar(
+            select(InsightFeedback).where(InsightFeedback.customer_id == customer_id, InsightFeedback.insight_key == key)
+        )
+
+    existing = find()
     if existing is None:
-        db.add(InsightFeedback(customer_id=customer_id, insight_key=key, response=response, created_at=utcnow()))
-    else:
+        try:
+            with db.begin_nested():  # savepoint: a lost race must not undo the caller's other pending changes
+                db.add(InsightFeedback(customer_id=customer_id, insight_key=key, response=response, created_at=utcnow()))
+        except IntegrityError:  # a concurrent request inserted the same row first
+            existing = find()
+    if existing is not None:
         existing.response = response
         existing.created_at = utcnow()
 
