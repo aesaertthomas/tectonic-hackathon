@@ -44,7 +44,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
         <span className="nav settings" aria-disabled="true"><Icon name="gear" /><span>Settings</span></span>
       </aside>
-      <nav className="tabs" aria-label="Main navigation">
+      <nav className="tabs" aria-label="Main navigation (tabs)">
         {links.map((l) => (
           <Link key={l.to} to={l.to} className={l.active ? "active" : undefined} aria-current={l.active ? "page" : undefined}>
             <Icon name={l.icon} /><span>{l.label}</span>

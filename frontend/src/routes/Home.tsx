@@ -24,7 +24,7 @@ export function barWidth(amount: number, typical: number): number {
 }
 
 function percentLabel(amount: number, typical: number): string {
-  return typical > 0 ? `${Math.round((amount / typical) * 100)}%` : "new";
+  return typical > 0 ? `${Math.max(0, Math.round((amount / typical) * 100))}%` : "new";
 }
 
 function Progress({ amount, typical, label }: { amount: number; typical: number; label: string }) {
@@ -41,7 +41,14 @@ function Progress({ amount, typical, label }: { amount: number; typical: number;
 
 function CategoryCard({ c }: { c: BudgetCategory }) {
   return (
-    <a href={`#cat-${c.category}`} className={`category ${COLOUR[c.status]}`}>
+    <a
+      href={`#cat-${c.category}`}
+      className={`category ${COLOUR[c.status]}`}
+      onClick={() => {
+        const row = document.getElementById(`cat-${c.category}`);
+        if (row instanceof HTMLDetailsElement) row.open = true;
+      }}
+    >
       <span className="tile-icon"><Icon name={ICONS[c.category] ?? "budget"} /></span>
       <h3>{c.label}</h3>
       <strong className="amount-big">{eurWhole(c.amount_cents)}</strong>
@@ -121,11 +128,15 @@ export function Home() {
                 <strong>{eur(b.total_cents)}</strong>
                 <p>usual {eur(b.typical_total_cents)}</p>
               </div>
-              <Progress amount={b.total_cents} typical={b.typical_total_cents} label="a usual month" />
-              <div className="status-pill">
-                <span className="dot" aria-hidden="true" />
-                <div><strong>{STATUS_TITLE[b.status]}</strong><p>{b.note}</p></div>
-              </div>
+              {b.categories.length > 0 && (
+                <>
+                  <Progress amount={b.total_cents} typical={b.typical_total_cents} label="a usual month" />
+                  <div className="status-pill">
+                    <span className="dot" aria-hidden="true" />
+                    <div><strong>{STATUS_TITLE[b.status]}</strong><p>{b.note}</p></div>
+                  </div>
+                </>
+              )}
             </section>
             <section className="card accounts" aria-label="Accounts">
               {o.accounts.map((a) => (
