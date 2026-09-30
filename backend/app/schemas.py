@@ -5,7 +5,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .engine.types import SPENDING_CATEGORIES
+from .engine.types import SPENDING_CATEGORIES, GoalKind
 
 
 class Strict(BaseModel):
@@ -138,3 +138,81 @@ class ScenarioResponseOut(BaseModel):
     continues: ScenarioOut
     assumptions: list[str]
     coverage_note: str
+
+
+MAX_TARGET_CENTS = 1_000_000_000  # €10,000,000
+MAX_MONTHLY_CENTS = 10_000_000  # €100,000
+
+
+class GoalIn(Strict):
+    kind: GoalKind
+    name: str = Field(min_length=1, max_length=60)
+    target_cents: int = Field(gt=0, le=MAX_TARGET_CENTS)
+    target_date: date | None = None
+    earmarked_cents: int = Field(default=0, ge=0, le=MAX_TARGET_CENTS)
+    monthly_contribution_cents: int = Field(default=0, ge=0, le=MAX_MONTHLY_CENTS)
+    from_insight: str | None = Field(default=None, max_length=64, pattern=KEY_PATTERN)
+
+
+class GoalPatch(Strict):
+    name: str | None = Field(default=None, min_length=1, max_length=60)
+    target_cents: int | None = Field(default=None, gt=0, le=MAX_TARGET_CENTS)
+    target_date: date | None = None
+    earmarked_cents: int | None = Field(default=None, ge=0, le=MAX_TARGET_CENTS)
+    monthly_contribution_cents: int | None = Field(default=None, ge=0, le=MAX_MONTHLY_CENTS)
+
+    @model_validator(mode="after")
+    def _no_nulls_except_date(self) -> "GoalPatch":
+        for field in self.model_fields_set - {"target_date"}:
+            if getattr(self, field) is None:
+                raise ValueError(f"{field} can't be empty.")
+        return self
+
+
+class GoalEstimateIn(Strict):
+    kind: GoalKind
+    target_cents: int = Field(gt=0, le=MAX_TARGET_CENTS)
+    target_date: date | None = None
+    earmarked_cents: int = Field(default=0, ge=0, le=MAX_TARGET_CENTS)
+    monthly_contribution_cents: int = Field(default=0, ge=0, le=MAX_MONTHLY_CENTS)
+    name: str | None = Field(default=None, max_length=60)  # ignored; lets the client send the same body
+    goal_id: int | None = Field(default=None, gt=0, le=2_147_483_647)
+
+
+class GoalPlanOut(BaseModel):
+    remaining_cents: int
+    months_needed: int | None
+    estimated_completion: date | None
+    required_monthly_cents: int | None
+    on_track: bool | None
+    progress_pct: int
+
+
+class NextStepOut(BaseModel):
+    title: str
+    reason: str
+
+
+class GoalOut(BaseModel):
+    id: int
+    kind: GoalKind
+    name: str
+    target_cents: int
+    target_date: date | None
+    earmarked_cents: int
+    monthly_contribution_cents: int
+    plan: GoalPlanOut
+    next_steps: list[NextStepOut]
+
+
+class GoalsOut(BaseModel):
+    goals: list[GoalOut]
+    available_to_earmark_cents: int
+    suggested_monthly_cents: int
+    verify_note: str
+
+
+class GoalEstimateOut(BaseModel):
+    plan: GoalPlanOut
+    next_steps: list[NextStepOut]
+    verify_note: str
