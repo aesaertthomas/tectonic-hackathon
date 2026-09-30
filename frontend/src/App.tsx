@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { api } from "./api";
 import { AuthContext } from "./auth";
+import { AppShell } from "./components/AppShell";
 import { GoalForm } from "./routes/GoalForm";
 import { Goals } from "./routes/Goals";
 import { Home } from "./routes/Home";
@@ -28,12 +29,12 @@ export default function App() {
   const auth = useMemo(() => (me ? { me, logout, expire } : null), [me, logout, expire]);
 
   return (
-    <div className="backdrop">
-      <div className="device">
-        {me === undefined && <div className="center muted">Loading…</div>}
-        {me === null && <Login onLoggedIn={setMe} />}
-        {auth && (
-          <AuthContext.Provider value={auth}>
+    <>
+      {me === undefined && <div className="loading">Loading…</div>}
+      {me === null && <Login onLoggedIn={setMe} />}
+      {auth && (
+        <AuthContext.Provider value={auth}>
+          <AppShell>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/insights/:key" element={<Insight />} />
@@ -43,9 +44,9 @@ export default function App() {
               <Route path="/goals/:id" element={<GoalForm />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </AuthContext.Provider>
-        )}
-      </div>
-    </div>
+          </AppShell>
+        </AuthContext.Provider>
+      )}
+    </>
   );
 }
