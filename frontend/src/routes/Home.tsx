@@ -68,6 +68,12 @@ export function Home() {
               ))}
             </div>
           )}
+          <Link to="/goals" className="card card-link">
+            <span className="account-name grow">My goals</span>
+            <span className="chevron" aria-hidden="true">
+              ›
+            </span>
+          </Link>
           <p className="muted small">
             {data.coverage_note} Data up to {longDate(data.as_of)}.
           </p>
