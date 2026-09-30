@@ -1,5 +1,6 @@
 """Customer-facing copy. Calm, specific, free of judgment. Amounts always come from the engine."""
 
+from .budget import ABOVE_USUAL_PERCENT, CategoryBudget
 from .detect import SavingIncrease, SpendingIncrease
 from .forecast import ForecastInputs
 from .money import fmt_eur
@@ -75,3 +76,28 @@ def forecast_assumptions(inputs: ForecastInputs, s: SpendingIncrease) -> list[st
         COVERAGE_NOTE,
     ]
     return items
+
+
+NO_HISTORY_NOTE = "We need at least three full months of history before we can compare with your usual month."
+
+
+def _clearly_below(amount: int, typical: int) -> bool:
+    return amount * 100 < typical * (100 - ABOVE_USUAL_PERCENT)
+
+
+def budget_note(b: CategoryBudget) -> str:
+    if b.status == "high":
+        return f"{fmt_eur(b.amount)} this month, above your usual range of {fmt_eur(b.low)}–{fmt_eur(b.high)}."
+    if b.status == "above":
+        return f"{fmt_eur(b.amount - b.typical)} more than your usual month."
+    if _clearly_below(b.amount, b.typical):
+        return f"{fmt_eur(b.typical - b.amount)} less than your usual month."
+    return "In line with your usual month."
+
+
+def month_note(total: int, typical: int) -> str:
+    if total * 100 > typical * (100 + ABOVE_USUAL_PERCENT):
+        return f"You spent {fmt_eur(total - typical)} more than in a usual month."
+    if _clearly_below(total, typical):
+        return f"You spent {fmt_eur(typical - total)} less than in a usual month."
+    return "In line with your usual month."
