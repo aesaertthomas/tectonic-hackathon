@@ -1,4 +1,4 @@
-.PHONY: setup test seed dev
+.PHONY: setup test seed dev build serve
 
 setup:
 	python3 -m venv backend/.venv
@@ -16,3 +16,9 @@ dev:
 	(cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000) & \
 	(cd frontend && npm run dev); \
 	wait
+
+build:
+	cd frontend && npm run build
+
+serve: build
+	cd backend && .venv/bin/uvicorn app.main:app --port 8000

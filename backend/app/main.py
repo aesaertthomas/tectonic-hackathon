@@ -1,4 +1,8 @@
-from fastapi import FastAPI
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from .api import auth, goals, insights, overview
 from .config import Settings, get_settings
@@ -22,6 +26,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/api/health")
     def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    dist = Path(settings.frontend_dist)
+    index = dist / "index.html"
+    if index.is_file():
+        if (dist / "assets").is_dir():
+            app.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
+
+        @app.get("/{full_path:path}", include_in_schema=False)
+        def spa(full_path: str) -> FileResponse:
+            # Client-side routes get the app shell. Unknown API paths stay JSON 404s.
+            if full_path == "api" or full_path.startswith("api/"):
+                raise HTTPException(status_code=404)
+            return FileResponse(index)
 
     return app
 
