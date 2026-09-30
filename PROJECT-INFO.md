@@ -11,6 +11,8 @@
 - The KBC challenge asks for a *scalable personalization approach* (2.3M customers), not "just another feature".
 - Submission needs a public GitHub repo, a README (what it is, how to run it, what's unfinished), a demo video under 3 minutes and the Aikido screenshots. No secrets in the repo.
 
+- **Aikido grading also rewards fixes**: known weaknesses are deliberately left in for the first scan so the before/after screenshots show them fixed. Parked for later: the login rate limiter keys on client IP (behind a proxy this becomes a global lockout), and `cookie_secure` defaults to False. Fix both after the first Aikido scan.
+
 ## Known gotchas
 - The data contains internal transfers, which appear as two legs sharing a `transfer_id`, and credit-card repayments. Neither counts as income or spending. Card purchases sit on the `-CC` account and must be counted once. `monthly_summary` already applies these rules.
 - The folder is not a git repo yet, but Aikido needs a connected GitHub repo.
