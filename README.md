@@ -1,10 +1,9 @@
-# Adaptive Budgeting App
-
+# KBC TIMELINE
 ## Overview
 
-Most budgeting apps ask you to set limits yourself, and most people give up after a few weeks.
+Most budgeting apps ask you to set limits yourself, and most people understandably give up after a few weeks.
 
-This app works the other way around. It analyses your past expenses, learns your real spending habits, including seasonal variations and irregular costs, and builds a personalised, adaptive budget for each spending category.
+KBC timeline works the other way around. It analyses your past expenses, learns your real spending habits, including seasonal variations and irregular costs, and builds a personalised, adaptive budget for each spending category.
 
 Each month, you can see at a glance whether you are:
 
