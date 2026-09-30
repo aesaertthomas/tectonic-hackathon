@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .api import auth, insights, overview
+from .api import auth, goals, insights, overview
 from .config import Settings, get_settings
 from .security import make_security_middleware
 
@@ -17,6 +17,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(auth.router)
     app.include_router(overview.router)
     app.include_router(insights.router)
+    app.include_router(goals.router)
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
