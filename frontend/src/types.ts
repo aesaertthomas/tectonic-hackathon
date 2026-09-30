@@ -96,3 +96,27 @@ export type GoalsResponse = {
   verify_note: string;
 };
 export type GoalEstimate = { plan: GoalPlan; next_steps: NextStep[]; verify_note: string };
+
+export type BudgetStatus = "high" | "above" | "ok";
+export type BudgetCategory = {
+  category: string;
+  label: string;
+  amount_cents: number;
+  typical_cents: number;
+  usual_low_cents: number;
+  usual_high_cents: number;
+  status: BudgetStatus;
+  note: string;
+  history: MonthAmount[];
+  insight_key: string | null;
+  noted: boolean;
+};
+export type Budget = {
+  month: string;
+  total_cents: number;
+  typical_total_cents: number;
+  status: BudgetStatus;
+  note: string;
+  categories: BudgetCategory[];
+  coverage_note: string;
+};
