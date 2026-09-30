@@ -5,6 +5,7 @@ import { AuthContext } from "./auth";
 import { Home } from "./routes/Home";
 import { Insight } from "./routes/Insight";
 import { Login } from "./routes/Login";
+import { Scenario } from "./routes/Scenario";
 import type { Me } from "./types";
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/insights/:key" element={<Insight />} />
+              <Route path="/insights/:key/scenario" element={<Scenario />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AuthContext.Provider>
