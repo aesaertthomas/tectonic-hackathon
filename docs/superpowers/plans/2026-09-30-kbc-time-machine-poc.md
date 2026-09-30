@@ -38,6 +38,25 @@
 
 ---
 
+## Dependencies / Waves (parallel execution)
+
+Critical path: `1 → 2 → (3 ∥ 4) → 5 → 7 → 8 → 9 → 14`. Task 7 also needs Task 6 (hashing and test helpers); Task 8 needs Task 7's imported data; Task 9 uses the insight-key format from Task 8.
+
+| Wave | Run in parallel (one git worktree each) |
+|------|------------------------------------------|
+| A | Task 1 ∥ Task 10 (Steps 1–8 and 10 only; Step 9 Makefile edit and Step 11 smoke test are deferred to Wave G) |
+| B | Task 2 ∥ Task 6 |
+| C | Task 3 ∥ Task 4 ∥ Task 11 (build only; Step 6 smoke test deferred to Wave G) |
+| D | Task 5 ∥ Task 12 ∥ Task 13 |
+| E | Task 7 |
+| F | Task 8, then Task 9 |
+| G | Task 14, plus the deferred frontend steps (Task 10 Steps 9 and 11, Task 11 Step 6) and the browser walkthrough |
+
+- **Deferred smoke tests:** the frontend smoke steps (Task 10 Step 11, Task 11 Step 6) need the seeded overview/insight API, so they wait until Task 8 has landed (Wave G).
+- **Merge rule:** each task runs in its own worktree branched from `main`. The controller merges every finished and reviewed worktree into `main` before the next wave starts, and resolves the add-only conflicts in the shared files: `backend/tests/conftest.py` (1, 6, 7), `backend/app/schemas.py` (6, 8, 9), `backend/app/main.py` (1, 6, 8, 9, 14), `Makefile` (1, 10, 14), `frontend/src/App.tsx` (10–13), `frontend/src/routes/Home.tsx` (10, 11, 13). After each merge the full backend test suite and `npm run build` must pass on `main`.
+
+---
+
 ## File Structure
 
 ```
