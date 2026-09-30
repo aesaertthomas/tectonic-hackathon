@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../auth";
 import { Screen } from "../components/Screen";
 import { eur, longDate } from "../format";
@@ -12,24 +12,11 @@ const ACCOUNT_TYPES: Record<Account["type"], string> = {
 };
 
 export function Home() {
-  const { me, logout } = useAuth();
-  const navigate = useNavigate();
+  const { me } = useAuth();
   const { data, error } = useLoad<Overview>("/overview");
 
-  async function onLogout() {
-    await logout();
-    navigate("/", { replace: true });
-  }
-
   return (
-    <Screen
-      title={`Hi ${me.display_name}`}
-      action={
-        <button type="button" className="link-btn" onClick={onLogout}>
-          Log out
-        </button>
-      }
-    >
+    <Screen title={`Hi ${me.display_name}`}>
       {error && <p className="error">{error}</p>}
       {!data && !error && <p className="muted">Loading…</p>}
       {data && (

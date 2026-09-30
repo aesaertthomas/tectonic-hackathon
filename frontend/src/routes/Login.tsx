@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { api, errorMessage } from "../api";
-import logo from "../assets/logo.svg";
+import { BrandMark } from "../components/Icons";
 import type { Me } from "../types";
 
 export function Login({ onLoggedIn }: { onLoggedIn: (me: Me) => void }) {
@@ -22,9 +22,10 @@ export function Login({ onLoggedIn }: { onLoggedIn: (me: Me) => void }) {
   }
 
   return (
-    <form className="login" onSubmit={submit}>
-      <img src={logo} alt="KBC" className="login-logo" />
-      <h1>Time Machine</h1>
+    <div className="login-page">
+    <form className="card login" onSubmit={submit}>
+      <BrandMark />
+      <h1>Budget &amp; insights</h1>
       <div className="stack">
         <label className="field">
           Username
@@ -40,5 +41,6 @@ export function Login({ onLoggedIn }: { onLoggedIn: (me: Me) => void }) {
         {busy ? "Logging in…" : "Log in"}
       </button>
     </form>
+    </div>
   );
 }

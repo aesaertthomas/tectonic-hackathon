@@ -20,7 +20,7 @@ export function BarChart({ bars, band }: { bars: Bar[]; band?: { low: number; hi
         const top = y(b.value);
         return (
           <g key={`${b.label}-${i}`}>
-            <rect x={x} y={top} width={barWidth} height={HEIGHT - AXIS - top} rx={3} className={b.highlight ? "bar bar-hi" : "bar"} />
+            <rect x={x} y={top} width={barWidth} height={HEIGHT - AXIS - top} rx={3} className={b.highlight ? "bar-rect bar-hi" : "bar-rect"} />
             <text x={x + barWidth / 2} y={HEIGHT - 5} textAnchor="middle" className="chart-label">
               {b.label}
             </text>
