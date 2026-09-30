@@ -66,3 +66,18 @@ def _reset_rate_limits():
     user_limiter.clear()
     ip_limiter.clear()
     yield
+
+
+@pytest.fixture
+def dataset():
+    from app.seed import DEFAULT_DATASET, load_dataset
+
+    return load_dataset(str(DEFAULT_DATASET))
+
+
+@pytest.fixture
+def seeded(db, dataset):
+    from app.seed import import_dataset
+    from tests.helpers import PASSWORD
+
+    return import_dataset(db, dataset, password=PASSWORD)
