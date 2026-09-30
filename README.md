@@ -1,86 +1,30 @@
-# KBC Time Machine: proof of concept
+### KBC Time Machine
 
-> *Understand what's changing in your finances, see where it could lead, and take a useful next step toward what you want.*
+Most budgeting apps ask you to set limits yourself, and most people give up after a few weeks. This app works the other way around. It analyses your past expenses, learns your real habits (seasonal variations and irregular costs included), and builds a personalised, adaptive budget for each spending category. Each month, you see at a glance whether you are on track, ahead of your usual spending, or heading for an overrun.
 
-A web proof of concept for the KBC challenge of the Tectonic Hackathon. It looks like KBC Mobile. For each customer, the app learns their usual patterns from their own transactions, notices meaningful changes and explains them. It then asks the customer for context and shows a possible next step.
+How it works
 
-The same engine runs for every customer: nothing is hard-coded per persona. That's the scalability argument: 2.3M customers means 2.3M personal baselines, not 2.3M rules.
+1. It learns your normal.
+The app studies your transaction history and calculates what a typical month looks like for you in every category: food, housing, transport, hobbies, health, and more. It adapts to the calendar, so it knows that heating costs more in winter and that holidays and gifts spike in July and December.
 
-## Demo journeys
+2. It shows your month in real time.
+A detailed window for each category compares your current spending to your normal monthly budget. You see how much you have spent, how much remains, and whether your pace is ahead of or behind your usual pattern.
 
-| Login | Who | What you'll see |
-| --- | --- | --- |
-| `desmet` | Family, 3 kids | **Groceries €1,420 in September against a usual €842–€981.** Answer "One-off" or "Expected to continue", then **See the impact**: a 1–3 month cash-flow scenario in which the current account could drop below the €1,000 buffer. Back-to-school costs are *not* flagged, because they rise every September. |
-| `jean` | Pensioner | **Saving went from around €200 to €450 a month.** Connect it to a goal (car, home, emergency fund…) and see the timeline, the effect of the monthly amount, and next steps with a reason for each. |
-| `lucas` | Student, irregular income | Nothing flagged: the engine doesn't raise false alarms. |
+3. It predicts where you will end up.
+Based on your current pace, the app projects your end-of-month total for each category, so you can react before the month is over, not after.
 
-## Run it
+4. It adapts over time.
+As your life changes (a new home, a new job, a growing family), your budget updates itself. You never need to rebuild it manually.
 
-Requirements: Python 3.12+, Node 20+.
-
-```bash
-make setup                           # backend venv + frontend packages
-DEMO_PASSWORD=choose-one make seed   # import sim-user-data.json (leave DEMO_PASSWORD out to get random passwords printed)
-make dev                             # API on :8000, app on http://localhost:5173
-```
-
-Or run a single server: `make serve`, then open http://localhost:8000.
-
-Tests: `make test`.
-
-## How it works
-
-```
-sim-user-data.json ──seed──▶ SQLite ──repo.py (customer-scoped)──▶ engine/ (pure Python) ──▶ FastAPI ──▶ React
-```
-
-- **`backend/app/engine/`**: pure calculation engine, fully unit-tested. It has no web or database code.
-  - **Baseline:** the last 6 complete months per category (usual range = min–max, typical = median).
-  - **Spending insight:** more than 20% above the usual high, at least €50 above typical, and not a repeat of the same month last year.
-  - **Saving insight:** each of the last 3 months at least 50% above the same months last year, and at least €100 more a month.
-  - **Forecast:** scheduled items (confirmed, or estimated when the amount varies), plus the usual non-recurring spending (estimated), plus one "extra" line if the change continues. Every month's result is the sum of the lines shown.
-- Internal transfers and credit-card repayments are never counted as income or spending. Refunds are deducted. The engine's totals are tested against the dataset's own monthly summary.
-- All wording comes from templates. All amounts come from the engine. There is no LLM in the loop.
-
-## Security
-
-Built for the Aikido AI code audit (business logic, IDOR, authentication, authorization):
-
-- **Authentication:**
-  - argon2id password hashes and constant-work login (unknown users are still checked against a dummy hash)
-  - one generic error message
-  - rate limits per username + IP and per IP
-- **Sessions:**
-  - a random 256-bit token; only its SHA-256 is stored
-  - `HttpOnly`, `SameSite=Strict` cookie (`Secure` via `COOKIE_SECURE=true`)
-  - rotated on login, deleted on logout, 8h expiry
-- **Authorization and IDOR:**
-  - the customer comes only from the session
-  - all customer data goes through `backend/app/repo.py`, where every query filters on `customer_id`
-  - someone else's goal or insight returns the same 404 as one that doesn't exist
-  - insight keys must match an insight currently computed for *you*
-- **Business logic:**
-  - strict schemas (unknown fields rejected), bounded amounts and ids, target dates in the future
-  - earmarked savings can't exceed the target or your savings balance (summed across goals)
-  - `months` is 1–3; a saving insight can only be dismissed or connected to a goal
-  - no endpoint moves money
-- **CSRF and headers:**
-  - state-changing requests need a whitelisted `Origin`/`Referer` and `X-Requested-With: fetch`
-  - CSP, `X-Frame-Options: DENY`, `nosniff`, `no-store` on the API
-  - API docs are off unless `DEBUG=true`
-- **No secrets in the repo:** see `backend/.env.example`. Demo passwords are generated at seed time.
-
-## Data
-
-`sim-user-data.json` is **fictional** synthetic data generated by `generate_sim_user_data.py` (fixed seed). It covers 24 months (Oct 2024 – Sep 2026) for 3 profiles. The app analyses it "as of" 30 September 2026. To change the data, edit the generator and re-run `python3 generate_sim_user_data.py && make seed`.
-
-## What's unfinished
-
-- The KBC logo is a placeholder: replace `frontend/src/assets/logo.svg` with the official asset.
-- The next steps are illustrative. Product terms, eligibility and availability need verification before any integration.
-- Notification settings (frequency, snooze, per-category) are not built.
-- There is no real KBC data connection. The rate limiter is in memory (single process), and SQLite is used for the demo.
-- Customers without enough history (< 3 months) get no insights. A flow for entering expectations instead is not built.
-- The earmark limit check is not atomic: two simultaneous goal edits could together earmark more than the savings balance (advisory only; no money moves).
-- The login rate limiter is in memory, keyed by username+client IP; entries are pruned on revisit only, and behind a reverse proxy the client IP would be the proxy's (run uvicorn with `--proxy-headers` and a restricted `--forwarded-allow-ips` if deployed).
-- Session cookies are not marked `Secure` by default because the demo runs on plain http locally; set `COOKIE_SECURE=true` for any https deployment.
+Key features
+Adaptive budget per category, built from your own history
+Detailed monthly view per section (food, housing, transport, hobbies, etc.)
+Comparison with your normal month, updated in real time
+End-of-month projection for each category
+Smart alerts when you are spending faster than usual in a category
+Seasonality awareness for recurring peaks (energy, holidays, back-to-school)
+Who it is for
+Anyone who wants to understand their spending without filling in spreadsheets
+Families who need a clear, shared picture of the month
+Seniors who want reassurance and clear warnings
+Students and young adults with irregular income who need to anticipate low points
