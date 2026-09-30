@@ -14,7 +14,16 @@ export function Goals() {
   const { data, error } = useLoad<GoalsResponse>("/goals");
 
   return (
-    <Screen title="My goals" back="/">
+    <Screen
+      title="My goals"
+      action={
+        data && (
+          <Link to="/goals/new" className="btn btn-primary banner-cta">
+            New goal
+          </Link>
+        )
+      }
+    >
       {error && <p className="error">{error}</p>}
       {!data && !error && <p className="muted">Loading…</p>}
       {data && (
@@ -22,6 +31,7 @@ export function Goals() {
           {data.goals.length === 0 && (
             <div className="card muted">No goals yet. A goal connects what you save to something you want.</div>
           )}
+          <div className="goal-grid">
           {data.goals.map((g) => (
             <Link key={g.id} to={`/goals/${g.id}`} className="card card-link">
               <div className="stack-tight grow">
@@ -41,9 +51,7 @@ export function Goals() {
               </span>
             </Link>
           ))}
-          <Link to="/goals/new" className="btn btn-primary">
-            New goal
-          </Link>
+          </div>
         </>
       )}
     </Screen>

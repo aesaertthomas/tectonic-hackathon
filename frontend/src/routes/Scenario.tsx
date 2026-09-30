@@ -33,7 +33,7 @@ export function Scenario() {
   const firstBelow = data?.continues.months.find((m) => m.end_balance_cents < data.cash_buffer_cents);
 
   return (
-    <Screen title="See the impact" back={base}>
+    <Screen title="See the impact" subtitle="Compare what happens if this was a one-off with what happens if it continues." back={base}>
       <div className="segmented" role="group" aria-label="Forecast length">
         {LENGTHS.map((n) => (
           <button key={n} type="button" aria-pressed={months === n} onClick={() => setMonths(n)}>
@@ -44,7 +44,8 @@ export function Scenario() {
       {error && <p className="error">{error}</p>}
       {!data && !error && <p className="muted">Loading…</p>}
       {data && (
-        <>
+        <div className="split">
+          <div className="split-main">
           <div className="grid-2">
             <ScenarioCard title="If it's a one-off" scenario={data.one_off} />
             <ScenarioCard title="If it continues" scenario={data.continues} />
@@ -83,6 +84,8 @@ export function Scenario() {
             </table>
           </div>
 
+          </div>
+          <div className="split-side">
           <div className="card stack">
             <h3 className="card-title">What's included if it continues</h3>
             <div className="legend">
@@ -114,7 +117,8 @@ export function Scenario() {
               ))}
             </ul>
           </details>
-        </>
+          </div>
+        </div>
       )}
     </Screen>
   );

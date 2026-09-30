@@ -162,6 +162,8 @@ export function GoalForm() {
         </div>
       )}
 
+      <div className="split">
+      <div className="split-main">
       <div className="card stack">
         <label className="field">
           Name
@@ -196,6 +198,19 @@ export function GoalForm() {
         </label>
       </div>
 
+      <div className="actions">
+      <button type="button" className="btn btn-primary" disabled={busy || !valid} onClick={save}>
+        {editing ? "Save changes" : "Create goal"}
+      </button>
+      {editing && (
+        <button type="button" className="btn btn-ghost" disabled={busy} onClick={remove}>
+          {confirmDelete ? "Tap again to delete" : "Delete goal"}
+        </button>
+      )}
+      </div>
+      </div>
+
+      <div className="split-side">
       {plan && target !== null && (
         <div className="card stack-tight">
           <span className="tag">Estimate</span>
@@ -231,14 +246,8 @@ export function GoalForm() {
       )}
 
       {message && <p className="error">{message}</p>}
-      <button type="button" className="btn btn-primary" disabled={busy || !valid} onClick={save}>
-        {editing ? "Save changes" : "Create goal"}
-      </button>
-      {editing && (
-        <button type="button" className="btn btn-ghost" disabled={busy} onClick={remove}>
-          {confirmDelete ? "Tap again to delete" : "Delete goal"}
-        </button>
-      )}
+      </div>
+      </div>
     </Screen>
   );
 }
